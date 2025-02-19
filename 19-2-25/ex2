@@ -1,0 +1,4 @@
+# Task 7: Create a factor for women's height
+data("women")
+women$Height_Factor <- factor(women$height)
+print(women)
