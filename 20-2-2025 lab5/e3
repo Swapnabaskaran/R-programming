@@ -1,0 +1,66 @@
+#3. Handling Missing Values and Regression
+# (i) Handling missing values
+missing_counts <- colSums(is.na(airquality))
+print(missing_counts)
+
+# Drop if missing values are less than 10%
+airquality_clean <- airquality
+threshold <- 0.1 * nrow(airquality)
+airquality_clean[ , missing_counts < threshold] <- na.omit(airquality_clean)
+
+# Replace with mean if missing values exceed 10%
+for (col in names(airquality)) {
+  if (sum(is.na(airquality[[col]])) > threshold) {
+    airquality_clean[[col]][is.na(airquality_clean[[col]])] <- mean(airquality_clean[[col]], na.rm=TRUE)
+  }
+}
+
+print(summary(airquality_clean))
+
+#(ii) Linear Regression on Ozone and Solar.R
+model_lm <- lm(Ozone ~ Solar.R, data=airquality_clean)
+summary(model_lm)
+
+#(iii) Scatter Plot with Regression Line
+plot(airquality_clean$Solar.R, airquality_clean$Ozone, main="Ozone vs Solar Radiation", xlab="Solar Radiation", ylab="Ozone", col="blue", pch=19)
+abline(model_lm, col="red")
+
+#4. ChickWeight Dataset Analysis
+data("ChickWeight")
+
+# (i) Order data by weight grouped by diet and extract last 6 records
+ordered_data <- ChickWeight[order(ChickWeight$Diet, ChickWeight$weight), ]
+tail(ordered_data, 6)
+
+#(ii) Melting and Casting ChickWeight Data
+
+# (a) Melt function with ID variables
+melted_chick <- melt(ChickWeight, id.vars = c("Chick", "Time", "Diet"))
+print(head(melted_chick))
+
+# (b) Cast function to display mean weight per Diet
+mean_weight_per_diet <- dcast(melted_chick, Diet ~ variable, mean)
+print(mean_weight_per_diet)
+
+# (c) Cast function to display mode of weight per Diet
+get_mode_per_group <- function(x) {
+  uniqv <- unique(x)
+  uniqv[which.max(tabulate(match(x, uniqv)))]
+}
+mode_weight_per_diet <- aggregate(ChickWeight$weight, by=list(ChickWeight$Diet), FUN=get_mode_per_group)
+print(mode_weight_per_diet)
+
+#5. Visualizations
+#(a) Box Plot of Weight Grouped by Diet
+boxplot(ChickWeight$weight ~ ChickWeight$Diet, main="Boxplot of Weight by Diet", xlab="Diet", ylab="Weight", col="lightblue")
+#(b) Histogram for Weight in Diet-1
+hist(ChickWeight$weight[ChickWeight$Diet == 1], main="Histogram of Weight for Diet-1", xlab="Weight", col="lightgreen", border="black")
+#(c) Scatter Plot of Weight vs Time Grouped by Diet
+library(ggplot2)
+ggplot(ChickWeight, aes(x=Time, y=weight, color=factor(Diet))) + 
+  geom_point() +
+  ggtitle("Scatter Plot of Weight vs Time by Diet") +
+  xlab("Time") +
+  ylab("Weight") +
+  theme_minimal()
+
