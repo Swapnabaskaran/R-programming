@@ -1,0 +1,30 @@
+#1.(i) Mean, Median, and Mode
+
+values <- c(90, 50, 70, 80, 70, 60, 20, 30, 80, 90, 20)
+
+# Mean
+mean_value <- mean(values)
+
+# Median
+median_value <- median(values)
+
+# Mode function
+get_mode <- function(v) {
+  uniqv <- unique(v)
+  uniqv[which.max(tabulate(match(v, uniqv)))]
+}
+
+mode_value <- get_mode(values)
+
+print(mean_value)
+print(median_value)
+print(mode_value)
+
+#(ii) Find 2nd Highest and 3rd Lowest
+sorted_values <- sort(values)
+second_highest <- sorted_values[length(sorted_values)-1]
+third_lowest <- sorted_values[3]
+
+print(second_highest)
+print(third_lowest)
+
