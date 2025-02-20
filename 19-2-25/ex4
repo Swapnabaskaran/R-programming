@@ -1,0 +1,50 @@
+(i) Find Dimension, Structure, Summary, Standard Deviation
+print(dim(iris))         # Dimension
+print(str(iris))         # Structure
+print(summary(iris))     # Summary Statistics
+
+# Standard Deviation for all numeric columns
+print(sapply(iris[, 1:4], sd))
+
+(ii) Mean & Standard Deviation Grouped by Species
+library(dplyr)
+
+grouped_stats <- iris %>%
+  group_by(Species) %>%
+  summarise(across(where(is.numeric), list(mean = mean, sd = sd)))
+
+print(grouped_stats)
+
+(iii) Quantile Values for Sepal Width & Length
+print(quantile(iris$Sepal.Width))
+print(quantile(iris$Sepal.Length))
+
+(iv) Create iris1 with Sepal.Length.Cate
+iris1 <- iris
+iris1$Sepal.Length.Cate <- cut(iris$Sepal.Length, breaks = quantile(iris$Sepal.Length, probs = seq(0, 1, 0.25)), include.lowest = TRUE)
+
+print(head(iris1))
+
+(v) Average of Numerical Variables by Species & Sepal.Length.Cate
+avg_values <- iris1 %>%
+  group_by(Species, Sepal.Length.Cate) %>%
+  summarise(across(where(is.numeric), mean, na.rm = TRUE))
+
+print(avg_values)
+
+(vi) Average Mean Value by Species & Sepal.Length.Cate
+avg_mean_values <- iris1 %>%
+  group_by(Species, Sepal.Length.Cate) %>%
+  summarise(across(where(is.numeric), mean))
+
+print(avg_mean_values)
+
+(vii) Create Pivot Table for Species & Sepal.Length.Cate
+library(tidyr)
+
+pivot_table <- iris1 %>%
+  group_by(Species, Sepal.Length.Cate) %>%
+  summarise(Count = n()) %>%
+  spread(key = Sepal.Length.Cate, value = Count, fill = 0)
+
+print(pivot_table)
