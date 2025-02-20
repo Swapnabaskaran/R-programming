@@ -1,0 +1,35 @@
+#2(i),(ii),(iii),(iv),(v) data("airquality")  # Load airquality dataset
+
+# (i) Compute mean temperature without using built-in function
+mean_temp <- sum(airquality$Temp, na.rm=TRUE) / length(na.omit(airquality$Temp))
+print(mean_temp)
+
+# (ii) Extract first five rows
+head(airquality, 5)
+
+# (iii) Extract all columns except Temp and Wind
+airquality_subset <- airquality[, !(names(airquality) %in% c("Temp", "Wind"))]
+print(head(airquality_subset))
+
+# (iv) Find the coldest day
+coldest_day <- airquality[which.min(airquality$Temp), ]
+print(coldest_day)
+
+#(i) Summary Statistics
+summary(airquality)
+#(ii) Melt airquality dataset
+library(reshape2)
+melted_data <- melt(airquality)
+print(head(melted_data))
+
+#(iii) Melt dataset with "Month" and "Day" as ID variables
+melted_data <- melt(airquality, id.vars = c("Month", "Day"))
+print(head(melted_data))
+
+#(iv) Cast dataset based on Month and Day
+cast_data <- dcast(melted_data, Month + Day ~ variable, mean, na.rm=TRUE)
+print(head(cast_data))
+
+#(v) Compute Monthly Averages
+monthly_avg <- aggregate(airquality[, c("Ozone", "Solar.R", "Wind", "Temp")], by=list(airquality$Month), FUN=mean, na.rm=TRUE)
+print(monthly_avg)
